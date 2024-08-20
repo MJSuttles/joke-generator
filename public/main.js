@@ -6,30 +6,33 @@ import getRequest from '../api/promises';
 
 const init = () => {
   document.querySelector('#app').innerHTML = `
-    <h1>HELLO! You are up and running!</h1>
-    <small>Open your dev tools</small><br />
+    <h1>Wanna hear a funny joke?</h1>
     <button class="btn btn-danger" id="click-me">Click ME!</button><br />
     <hr />
     <div id="jokeText">
-      <h2>These are font awesome icons:</h2>
     </div>
     <div id="jokePunch"> 
   </div>
     <i class="fas fa-user fa-4x"></i> <i class="fab fa-github-square fa-5x"></i>
   `;
 
-  document
-    .querySelector('#click-me')
-    .addEventListener('click', () => {
+  let punchline = '';
+
+  document.querySelector('#app').addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'click-me') {
       getRequest().then((response) => {
+        document.querySelector('#jokePunch').innerHTML = '';
         document.querySelector('#jokeText').innerHTML = response.setup;
-        document.querySelector('#click-me').innerHTML = 'Get Punchline';
-        document.querySelector('#click-me').addEventListener('click', () => {
-          document.querySelector('#jokePunch').innerHTML = response.delivery;
-          // document.querySelector('#jokeSetup').innerHTML = jokePart1;
-        });
+        e.target.innerHTML = 'Get Punchline';
+        e.target.setAttribute('id', 'punchline');
+        punchline = response.delivery;
       });
-    });
+    } else if (e.target && e.target.id === 'punchline') {
+      document.querySelector('#jokePunch').innerHTML = punchline;
+      e.target.setAttribute('id', 'click-me');
+      e.target.innerHTML = 'Get Another Joke';
+    }
+  });
 
   // USE WITH FIREBASE AUTH
   // ViewDirectorBasedOnUserAuthStatus();
